@@ -2,5 +2,4 @@ check50:
   files: &check50_files
     - !exclude "*"
     - !require "matching.cc"
-    - !require "answers.cc"
-    - !require "tests/"
+    - !include "tests/*"

@@ -1,3 +1,4 @@
 *.o
 answers.*
 __pycache__/
+.vscode/*

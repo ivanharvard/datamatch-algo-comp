@@ -3,6 +3,8 @@
 #include <numeric>
 #include <algorithm>
 #include <cstdio>
+#include <vector>
+#include <climits>
 
 // ================================================
 // Helper functions
@@ -33,7 +35,7 @@ static void removematch(int a, int b, bool** matched, std::set<int>* match_sets)
 /// make_sortedindices(sorted_indices, scores, ucount):
 ///     For each individual, create a list of indices sorted by their scores.
 
-static void make_sortedindices(int** sorted_indices, int** scores,
+void make_sortedindices(int** sorted_indices, int** scores,
                                const int ucount) {
     for (int i = 0; i < ucount; ++i) {
         std::iota(sorted_indices[i], sorted_indices[i] + ucount, 0);
@@ -76,15 +78,35 @@ static long long totalscore(int** scores, int ucount, const std::set<int>* match
 /// static void output(scores, ucount, std::set<int>* match_sets):
 ///    Output the current matching statistics.
 
-static void output(int** scores, const int ucount, std::set<int>* match_sets) {
+void output(int** scores, const int ucount, std::set<int>* match_sets) {
     std::printf("Total matches: %d\n", totalmatches(ucount, match_sets));
     std::printf("Total match score: %lld\n", totalscore(scores, ucount, match_sets));
-    std::printf("================\n");
 }
 
 // ================================================
 // TODO
+// You are encouraged to use std::vector and other C++ standard library
+// features as needed. Do not change the function signatures. We've constructed
+// the function signatures to match C-style arrays, but you should always avoid
+// using raw pointers and C-style arrays when possible.
 // ================================================
+
+/// make_matches(target, sorted_indices, scores, matched, cur_poss,
+///              ucount, match_sets):
+///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
+///     round, keep making proposal until a full pass produces no changes.
+
+void make_matches(const int target, 
+                  int** sorted_indices, 
+                  int** scores,
+                  bool** matched, 
+                  int* cur_poss,
+                  const int ucount,
+                  std::set<int>* match_sets) {
+
+    // TODO
+    return;
+}
 
 /// try_propose(proposer, iter, sorted_indices, scores, matched, cur_poss,
 ///             change, ucount, has, match_sets):
@@ -104,7 +126,7 @@ static void output(int** scores, const int ucount, std::set<int>* match_sets) {
 ///        subsequent `addmatch`.
 ///      - Returns true if a proposal was made, false otherwise.
 
-static bool try_propose(const int proposer, 
+bool try_propose(const int proposer, 
                         const size_t iter,
                         int** sorted_indices, 
                         int** scores, 
@@ -112,26 +134,8 @@ static bool try_propose(const int proposer,
                         int* cur_poss,
                         const int ucount, 
                         std::set<int>* match_sets) {
-    
     // TODO
     return false;
-}
-
-/// make_matches(target, sorted_indices, scores, matched, cur_poss,
-///              ucount, match_sets):
-///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
-///     round, keep making proposal until a full pass produces no changes.
-
-static void make_matches(const int target, 
-                         int** sorted_indices, 
-                         int** scores,
-                         bool** matched, 
-                         int* cur_poss,
-                         const int ucount,
-                         std::set<int>* match_sets) {
-
-    // TODO
-    return;
 }
 
 // ================================================
@@ -139,28 +143,23 @@ static void make_matches(const int target,
 // ================================================
 
 static void run(int target, int limit,
-                int** sorted_indices,
-                int** scores,
-                bool** matched,
-                int* cur_poss,
-                int ucount,
-                std::set<int>* match_sets) {
-    std::printf("Making matches: target %d (limit %d)\n", target, limit);
-
+         int** sorted_indices,
+         int** scores,
+         bool** matched,
+         int* cur_poss,
+         int ucount,
+         std::set<int>* match_sets) {
 
     // Clear state
     for (int i = 0; i < ucount; ++i) {
-    match_sets[i].clear();
-    for (int j = 0; j < ucount; ++j) matched[i][j] = false;
+        match_sets[i].clear();
+        for (int j = 0; j < ucount; ++j) matched[i][j] = false;
     }
-
 
     make_sortedindices(sorted_indices, scores, ucount);
 
-
     make_matches(target, sorted_indices, scores, matched, 
                  cur_poss, ucount, match_sets);
-
 
     // Sanity: no forbidden edges used when someone is totally isolated
     for (int i = 0; i < ucount; ++i) {
@@ -176,31 +175,18 @@ static void run(int target, int limit,
 
 void perform_matching(const int target, const int limit, int** scores,
                       bool** matched, const int ucount) {
-    std::printf("Beginning matching...\n");
+    std::vector<std::set<int>> match_sets_vec(ucount);
+    std::vector<int>            cur_poss_vec(ucount, 0);
+    std::vector<std::vector<int>> sorted_indices_vec(ucount, std::vector<int>(ucount));
 
+    std::vector<int*>  sorted_indices_rows(ucount);
+    for (int i = 0; i < ucount; ++i) sorted_indices_rows[i] = sorted_indices_vec[i].data();
 
-    // Allocate working memory
-    auto match_sets = new std::set<int>[ucount];
-    auto cur_poss = new int[ucount];
-    auto sorted_indices = new int*[ucount];
-    for (int i = 0; i < ucount; ++i) sorted_indices[i] = new int[ucount];
-
-
-    run(target, limit, sorted_indices, scores, matched, 
-        cur_poss, ucount, match_sets);
-
-
-    // Cleanup
-    for (int i = 0; i < ucount; ++i) delete[] sorted_indices[i];
-    delete[] sorted_indices;
-    delete[] cur_poss;
-    delete[] match_sets;
+    run(target, limit,
+        sorted_indices_rows.data(),
+        scores,
+        matched,
+        cur_poss_vec.data(),
+        ucount,
+        match_sets_vec.data());
 }
-
-int main() {
-    // You can call perform_matching here if you'd like. Just make sure to
-    // comment it out during testing. Otherwise, just run the tests.
-    // perform_matching(-1, -1, nullptr, nullptr, 0);
-}
-
-
