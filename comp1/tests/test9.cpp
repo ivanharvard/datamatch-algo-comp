@@ -4,15 +4,11 @@
 #include <algorithm>
 #include <cstdio>
 
-void run(int target, int limit,
-         int** sorted_indices,
-         int** scores,
-         bool** matched,
-         int* cur_poss,
-         int ucount,
-         std::set<int>* match_sets);
+void perform_matching(const int target, const int limit, int** scores,
+                      bool** matched, const int ucount);
+void make_sortedindices(int** sorted_indices, int** scores, const int ucount);
 
-/// run works on a large input
+/// perform_matching works on a large input
 
 int main(void) {
     

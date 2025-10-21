@@ -3,6 +3,9 @@ These are checks for comp1. Feel free to read them. Editing them won't help much
 but if you find a mistake, please let me know!
 """
 import check50
+import check50.config
+
+check50.config.set_truncate_len(100)
 
 @check50.check()
 def exists():
@@ -25,8 +28,8 @@ def test1():
 @check50.check(compiles)
 def test2():
     """test2.cpp passes"""
-    expect_matches = 3
-    expect_score = 15
+    expect_matches = 2
+    expect_score = 19
     link_and_run_test(2, expect_matches, expect_score)
 
 @check50.check(compiles)
@@ -40,6 +43,5 @@ def no_memory_leak():
 def link_and_run_test(i, expect_matches, expect_score):
     check50.run(f"g++ tests/test{i}.cpp matching.o -o test{i}").exit(0)
     (check50.run(f"./test{i}")
-     .stdout(f"Total matches: {expect_matches}")
-     .stdout(f"Total match score: {expect_score}")
+     .stdout(f"Total matches: {expect_matches}\nTotal match score: {expect_score}\n")
      .exit(0))

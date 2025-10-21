@@ -19,6 +19,7 @@ void make_matches(const int target,
                   int* cur_poss,
                   const int ucount,
                   std::set<int>* match_sets);
+void make_sortedindices(int** sorted_indices, int** scores, const int ucount);
 void output(int** scores, const int ucount, std::set<int>* match_sets);
 
 /// try_propose works on a large input
