@@ -1,0 +1,4 @@
+check50:
+  files: &check50_files
+    - !exclude "*"
+    - !require "../comp1/matching.cc"
