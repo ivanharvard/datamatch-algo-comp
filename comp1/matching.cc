@@ -1,6 +1,8 @@
 #include <set>
-
-#include "matching.h"
+#include <cassert>
+#include <numeric>
+#include <algorithm>
+#include <cstdio>
 
 // ================================================
 // Helper functions
@@ -36,7 +38,14 @@ static void make_sortedindices(int** sorted_indices, int** scores,
     for (int i = 0; i < ucount; ++i) {
         std::iota(sorted_indices[i], sorted_indices[i] + ucount, 0);
         // Sort candidate indices for i, descending by score[i][j].
-        sort_on_other(sorted_indices[i], scores[i], ucount);
+        // If scores are equal, keep lower index first.
+        std::sort(sorted_indices[i], sorted_indices[i] + ucount,
+                  [&](int a, int b){
+                      int sa = scores[i][a];
+                      int sb = scores[i][b];
+                      if (sa != sb) return sa > sb; // descending
+                      return a < b;
+                  });
     }
 }
 
@@ -68,10 +77,9 @@ static long long totalscore(int** scores, int ucount, const std::set<int>* match
 ///    Output the current matching statistics.
 
 static void output(int** scores, const int ucount, std::set<int>* match_sets) {
-    Logger logger = Logger::instance();
-    logger.log(INFO, "Total matches: %d", totalmatches(ucount, match_sets));
-    logger.log(INFO, "Total match score: %lld", totalscore(scores, ucount, match_sets));
-    logger.log(INFO, "================");
+    std::printf("Total matches: %d\n", totalmatches(ucount, match_sets));
+    std::printf("Total match score: %lld\n", totalscore(scores, ucount, match_sets));
+    std::printf("================\n");
 }
 
 // ================================================
@@ -137,8 +145,7 @@ static void run(int target, int limit,
                 int* cur_poss,
                 int ucount,
                 std::set<int>* match_sets) {
-    Logger logger = Logger::instance();
-    logger.log(INFO, "Making matches: target %d (limit %d)", target, limit);
+    std::printf("Making matches: target %d (limit %d)\n", target, limit);
 
 
     // Clear state
@@ -169,8 +176,7 @@ static void run(int target, int limit,
 
 void perform_matching(const int target, const int limit, int** scores,
                       bool** matched, const int ucount) {
-    Logger logger = Logger::instance();
-    logger.log(INFO, "Beginning matching (minimal scaffold)...");
+    std::printf("Beginning matching...\n");
 
 
     // Allocate working memory
@@ -191,5 +197,10 @@ void perform_matching(const int target, const int limit, int** scores,
     delete[] match_sets;
 }
 
+int main() {
+    // You can call perform_matching here if you'd like. Just make sure to
+    // comment it out during testing. Otherwise, just run the tests.
+    // perform_matching(-1, -1, nullptr, nullptr, 0);
+}
 
 
