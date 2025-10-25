@@ -83,6 +83,25 @@ void output(int** scores, const int ucount, std::set<int>* match_sets) {
     std::printf("Total match score: %lld\n", totalscore(scores, ucount, match_sets));
 }
 
+/// find_worst_partner(candidate, scores, match_sets):
+///    Returns the index of the worst current partner for `candidate`, according
+///    to the `candidate`'s preference scores.
+
+static int find_worst_partner(int candidate, int** scores,
+                              const std::set<int>* match_sets) {
+    int worst_partner = -1;
+    int worst_score   = INT_MAX;
+    for (int m : match_sets[candidate]) {
+        int score = scores[candidate][m];
+        if (score < worst_score || (score == worst_score && m > worst_partner)) {
+            worst_score = score;
+            worst_partner = m;
+        }
+    }
+    return worst_partner;
+}
+
+
 // ================================================
 // TODO
 //
@@ -109,7 +128,8 @@ void output(int** scores, const int ucount, std::set<int>* match_sets) {
 ///      - Else, if the candidate is at capacity, compare scores at the candidate.
 ///        If the proposer is strictly better than some current partner m in
 ///        candidate's match set, replace them using `removematch` and a 
-///        subsequent `addmatch`.
+///        subsequent `addmatch`. You may find the helper function 
+///        `find_worst_partner` useful for this. 
 ///      - Returns true if a proposal was made, false otherwise.
 
 bool try_propose(const int proposer, 
