@@ -130,7 +130,8 @@ static int find_worst_partner(int candidate, int** scores,
 ///        candidate's match set, replace them using `removematch` and a 
 ///        subsequent `addmatch`. You may find the helper function 
 ///        `find_worst_partner` useful for this. 
-///      - Returns true if a proposal was made, false otherwise.
+///      - Returns true if a proposal was attempted (regardless of success), 
+///        false otherwise.
 ///
 ///     Parameters:
 ///      - proposer: The index of the individual making the proposal.
