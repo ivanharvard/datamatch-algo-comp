@@ -93,7 +93,7 @@ static int find_worst_partner(int candidate, int** scores,
     int worst_score   = INT_MAX;
     for (int m : match_sets[candidate]) {
         int score = scores[candidate][m];
-        if (score < worst_score || (score == worst_score && m > worst_partner)) {
+        if (score < worst_score) {
             worst_score = score;
             worst_partner = m;
         }
@@ -131,6 +131,25 @@ static int find_worst_partner(int candidate, int** scores,
 ///        subsequent `addmatch`. You may find the helper function 
 ///        `find_worst_partner` useful for this. 
 ///      - Returns true if a proposal was made, false otherwise.
+///
+///     Parameters:
+///      - proposer: The index of the individual making the proposal.
+///      - iter: The number of iterations (capacity) allowed for each individual.
+///      - sorted_indices: A 2D array where each row contains the indices of
+///                        candidates sorted by preference for each proposer.
+///                        Example: sorted_indices[proposer] gives the
+///                        preference order for `proposer` from most to least
+///                        preferred.
+///      - scores: A 2D array where scores[i][j] represents the score of
+///                individual `i` for individual `j`. A score of -1 indicates
+///                that `i` cannot propose to `j`.
+///      - matched: A 2D boolean array where matched[i][j] is true
+///                 if individuals `i` and `j` are currently matched.
+///      - cur_poss: An array where cur_poss[i] indicates the current position
+///                   in the preference list for proposer `i`.
+///      - ucount: The total number of individuals.
+///      - match_sets: An array of sets where match_sets[i] contains the indices
+///                    of individuals currently matched with individual `i`.
 
 bool try_propose(const int proposer, 
                         const size_t iter,
