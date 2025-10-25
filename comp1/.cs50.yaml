@@ -3,3 +3,4 @@ check50:
     - !exclude "*"
     - !require "matching.cc"
     - !include "tests/*"
+    - !include "answers.o"

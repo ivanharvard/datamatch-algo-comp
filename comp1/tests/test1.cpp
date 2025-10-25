@@ -24,8 +24,5 @@ void output(int** scores, const int ucount, std::set<int>* match_sets);
 /// handout code compiles and links with no errors
 
 int main(void) {
-    try_propose(0, 0, nullptr, nullptr, nullptr, nullptr, 0, nullptr);
-    make_matches(0, nullptr, nullptr, nullptr, nullptr, 0, nullptr);
-    output(nullptr, 0, nullptr);
     return 0;
 }

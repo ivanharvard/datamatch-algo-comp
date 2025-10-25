@@ -3,6 +3,20 @@
 #include <numeric>
 #include <algorithm>
 #include <cstdio>
+#include <vector>
+#include <memory>
+#include <random>
+
+#include "utils.h"
+#include "view.hpp"
+
+const int n = 4;
+const int A[n][n] = {
+    {-1, 10,  3,  2},
+    {10, -1,  1,  0},
+    { 3,  1, -1,  9},
+    { 2,  0,  9, -1}
+};
 
 bool try_propose(const int proposer, 
                  const size_t iter,
@@ -22,9 +36,7 @@ void make_matches(const int target,
 void make_sortedindices(int** sorted_indices, int** scores, const int ucount);
 void output(int** scores, const int ucount, std::set<int>* match_sets);
 
-/// try_propose works on an edge case
+/// make_matches works on a small input
 
-int main(void) {
-    
-    return 0;
+int main() {
 }

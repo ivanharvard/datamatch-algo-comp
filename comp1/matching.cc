@@ -85,28 +85,14 @@ void output(int** scores, const int ucount, std::set<int>* match_sets) {
 
 // ================================================
 // TODO
+//
+// Note:
 // You are encouraged to use std::vector and other C++ standard library
 // features as needed. Do not change the function signatures. We've constructed
-// the function signatures to match C-style arrays, but you should always avoid
-// using raw pointers and C-style arrays when possible.
+// the function signatures to match C-style arrays (because this is what our 
+// codebase actually looks like), but you should always avoid using raw pointers
+// and C-style arrays when possible.
 // ================================================
-
-/// make_matches(target, sorted_indices, scores, matched, cur_poss,
-///              ucount, match_sets):
-///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
-///     round, keep making proposal until a full pass produces no changes.
-
-void make_matches(const int target, 
-                  int** sorted_indices, 
-                  int** scores,
-                  bool** matched, 
-                  int* cur_poss,
-                  const int ucount,
-                  std::set<int>* match_sets) {
-
-    // TODO
-    return;
-}
 
 /// try_propose(proposer, iter, sorted_indices, scores, matched, cur_poss,
 ///             change, ucount, has, match_sets):
@@ -136,6 +122,23 @@ bool try_propose(const int proposer,
                         std::set<int>* match_sets) {
     // TODO
     return false;
+}
+
+/// make_matches(target, sorted_indices, scores, matched, cur_poss,
+///              ucount, match_sets):
+///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
+///     round, keep making proposal until a full pass produces no changes.
+
+void make_matches(const int target, 
+                  int** sorted_indices, 
+                  int** scores,
+                  bool** matched, 
+                  int* cur_poss,
+                  const int ucount,
+                  std::set<int>* match_sets) {
+
+    // TODO
+    return;
 }
 
 // ================================================

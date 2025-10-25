@@ -6,6 +6,9 @@
 #include <vector>
 #include <memory>
 
+#include "utils.h"
+#include "view.hpp"
+
 const int n = 4;
 const int A[n][n] = {
     {-1, 10,  3,  2},
