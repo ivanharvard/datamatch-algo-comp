@@ -6,5 +6,6 @@
 
 *.o
 answers.*
+!answers.o
 __pycache__/
 .vscode/*

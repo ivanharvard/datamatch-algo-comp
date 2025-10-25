@@ -5,8 +5,9 @@ but if you find a mistake, please let me know!
 """
 import check50
 import check50.config
+import check50.c
 
-check50.config.set_truncate_len(100)
+check50.config.set_truncate_len(50)
 
 @check50.check()
 def exists():
@@ -57,11 +58,10 @@ def test7():
 @check50.check(compiles)
 def no_memory_leak():
     """matching.cc has no memory leaks"""
-    expected_out = "All heap blocks were freed -- no leaks are possible"
     test = "test7" # we only test leaks on this
 
     check50.run(f"g++ tests/{test}.cpp matching.o -o {test}").exit(0)
-    check50.run(f"valgrind --leak-check=full ./{test}").stdout(expected_out).exit(0)
+    check50.c.valgrind(f"./{test}").stdout(timeout=10)
 
 def solution_matches_test(i):
     check50.run(f"g++ tests/test{i}.cpp answers.o -o test{i}_sol").exit(0)

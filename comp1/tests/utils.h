@@ -18,7 +18,9 @@ inline std::vector<std::vector<int>> make_random_matrix(int n, int seed) {
 
 inline void build_intpp_from_vec(const std::vector<std::vector<int>>& src,
                                  Int2D& dst) {
+    assert(static_cast<int>(src.size()) == dst.n);
     for (int i = 0; i < dst.n; ++i) {
-        std::copy(src[i].begin(), src[i].end(), dst.rows[i]+i*dst.n);
+        assert(static_cast<int>(src[i].size()) == dst.n);
+        std::copy(src[i].begin(), src[i].begin() + dst.n, dst.rows[i]); 
     }
 }

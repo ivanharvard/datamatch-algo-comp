@@ -9,20 +9,29 @@ struct Int2D {
     Int2D(int n_) : n(n_), buf(n_*n_), rows(n_) {
         for (int i = 0; i < n; ++i) rows[i] = buf.data() + i*n;
     }
-    int** ptr() { return rows.data(); }
-    int*  data(){ return buf.data();  }
-    int&  at(int r,int c){ return buf[r*n + c]; }
+    int**       ptr()       { return rows.data(); }
+    int* const* ptr() const { return rows.data(); }
+    const int&  at(int r,int c) const { return buf[r*n + c]; }
 };
 
 struct Bool2D {
-    int n;
-    std::vector<std::unique_ptr<bool[]>> storage;
-    std::vector<bool*> rows;
-    Bool2D(int n_) : n(n_), storage(n_), rows(n_) {
-        for (int i = 0; i < n; ++i) {
-            storage[i] = std::unique_ptr<bool[]>(new bool[n_]{}); // zeroed
-            rows[i] = storage[i].get();
-        }
+    int n{};
+    std::unique_ptr<bool[]> buf;  // n*n row-major, one allocation
+    std::vector<bool*> rows;      // n row pointers
+
+    explicit Bool2D(int n_) : n(n_), buf(new bool[n_ * n_]{}), rows(n_) {
+        for (int i = 0; i < n; ++i) rows[i] = buf.get() + i * n;
     }
-    bool** ptr(){ return rows.data(); }
+
+    bool**       ptr()       { return rows.data(); }
+    bool* const* ptr() const { return rows.data(); }
+
+    bool& at(int r, int c)       { return rows[r][c]; }
+    bool  at(int r, int c) const { return rows[r][c]; }
+
+    void fill(bool v) {
+        // bool is trivially copyable; fill is fine
+        std::fill(buf.get(), buf.get() + n* n, v);
+    }
 };
+

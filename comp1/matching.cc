@@ -185,14 +185,10 @@ void make_matches(const int target,
 // END OF TODO 
 // ================================================
 
-static void run(int target, int limit,
-         int** sorted_indices,
-         int** scores,
-         bool** matched,
-         int* cur_poss,
-         int ucount,
-         std::set<int>* match_sets) {
-
+static void run(int target, int** sorted_indices,
+                int** scores, bool** matched,
+                int* cur_poss, int ucount,
+                std::set<int>* match_sets) {
     // Clear state
     for (int i = 0; i < ucount; ++i) {
         match_sets[i].clear();
@@ -208,7 +204,7 @@ static void run(int target, int limit,
     for (int i = 0; i < ucount; ++i) {
         for (int j = 0; j < ucount; ++j) {
             if (match_sets[i].empty() && match_sets[j].empty()) {
-                assert(scores[i][j] < 0);
+                assert(scores[i][j] < 0 && "Did you implement try_propose and make_matches yet?");
             }
         }
     }
@@ -216,7 +212,7 @@ static void run(int target, int limit,
     output(scores, ucount, match_sets);
 }
 
-void perform_matching(const int target, const int limit, int** scores,
+void perform_matching(const int target, int** scores,
                       bool** matched, const int ucount) {
     std::vector<std::set<int>> match_sets_vec(ucount);
     std::vector<int>            cur_poss_vec(ucount, 0);
@@ -225,7 +221,7 @@ void perform_matching(const int target, const int limit, int** scores,
     std::vector<int*>  sorted_indices_rows(ucount);
     for (int i = 0; i < ucount; ++i) sorted_indices_rows[i] = sorted_indices_vec[i].data();
 
-    run(target, limit,
+    run(target,
         sorted_indices_rows.data(),
         scores,
         matched,
