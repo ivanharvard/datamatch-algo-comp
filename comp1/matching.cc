@@ -167,7 +167,10 @@ bool try_propose(const int proposer,
 /// make_matches(target, sorted_indices, scores, matched, cur_poss,
 ///              ucount, match_sets):
 ///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
-///     round, keep making proposal until a full pass produces no changes.
+///     round, keep making proposal until a full pass produces no changes. 
+///     Ensure that `cur_poss` is reset at the start of the function (i.e. 
+///     `cur_poss[i] = 0` for all `i`). Only propose if the proposer has
+///     remaining capacity (i.e. `match_sets[proposer].size() < iter`).
 
 void make_matches(const int target, 
                   int** sorted_indices, 
