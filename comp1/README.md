@@ -23,7 +23,11 @@ and comparing that to
 ```
 make answers-1
 ```
-which should lead to the same output
+If you see
+```
+Success!
+```
+twice, you're good to go!
 
 You can check all of the tests, and some useful output, by running
 ```
