@@ -160,7 +160,31 @@ bool try_propose(const int proposer,
                         int* cur_poss,
                         const int ucount, 
                         std::set<int>* match_sets) {
-    // TODO
+    
+    if (match_sets[proposer].size() >= iter) return false;
+    // loop through preference list until candidate then attempt to propose
+    while (cur_poss[proposer] < ucount) {
+        int cand = sorted_indices[proposer][cur_poss[proposer]];
+        cur_poss[proposer]++;
+        // skip self & -1 & already matches
+        if (cand == proposer || scores[proposer][cand]<0 || matched[proposer][cand]){
+            continue;
+        }
+
+        // attempt to propose
+        if (match_sets[cand].size()<iter){
+            addmatch(proposer, cand, matched, match_sets);
+        } else {
+            // if full, replace if proposer better than worst candidate
+            int worst = find_worst_partner(cand, scores, match_sets);
+            if (worst != -1 && scores[cand][proposer] > scores[cand][worst]){
+                removematch(worst, cand, matched, match_sets);
+                addmatch(proposer, cand, matched, match_sets);
+            }
+        }
+        return true; // attempted one proposal
+    }
+
     return false;
 }
 
@@ -180,7 +204,21 @@ void make_matches(const int target,
                   const int ucount,
                   std::set<int>* match_sets) {
 
-    // TODO
+    // reset proposal pointers
+    for (size_t i=0; i<ucount; i++) cur_poss[i]=0;
+    // iterate proposal rounds
+    for (size_t j=1; j<=target; j++){
+        while (true){
+            bool attempted_any = false;
+            for (int k=0; k<ucount; k++){
+                if (match_sets[k].size() >= j) continue;
+                size_t prev_matches = match_sets[k].size();
+                bool attempted = try_propose(k, j, sorted_indices, scores, matched, cur_poss, ucount, match_sets);
+                attempted_any = attempted_any | attempted;
+            }
+            if (!attempted_any) break; // no further proposals can be made
+        }
+    }
     return;
 }
 
