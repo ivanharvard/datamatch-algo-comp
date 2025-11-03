@@ -1,6 +1,6 @@
 #include "../scoring.hpp"
 
-// check_compatibility respects same-house preferences
+// check_compatibility respects class year gaps
 
 int main() {
     User u1;
@@ -25,38 +25,10 @@ int main() {
     u1.crush = u2.crush = u3.crush = u4.crush = -1; // no crushes
 
     u1.year = 0;
-    u2.year = 0;
+    u2.year = 1;
+
     u3.year = 0;
-    u4.year = 0;
-
-    u1.min_compatible_age = 20;
-    u1.max_compatible_age = 20;
-    u2.min_compatible_age = 20;
-    u2.max_compatible_age = 20;
-    u3.min_compatible_age = 20;
-    u3.max_compatible_age = 20;
-    u4.min_compatible_age = 20;
-    u4.max_compatible_age = 20;
-    u1.age = 20;
-    u2.age = 20;
-    u3.age = 20;
-    u4.age = 20;
-
-    // success
-    u1.college = "Harvard";
-    u2.college = "Harvard";
-    u1.house = "Adams";
-    u2.house = "Quincy";
-    u1.no_house_matches = false;
-    u2.no_house_matches = false;
-
-    // failure
-    u1.college = "Harvard";
-    u2.college = "Harvard";
-    u1.house = "Adams";
-    u2.house = "Adams";
-    u1.no_house_matches = false;
-    u2.no_house_matches = true;
+    u4.year = 3;
 
     return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
 }

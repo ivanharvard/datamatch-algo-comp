@@ -1,6 +1,6 @@
 #include "../scoring.hpp"
 
-// check_compatibility returns true for mutual crushes
+// check_compatibility returns false for users attending different colleges
 
 int main() {
     User u1;
@@ -14,8 +14,11 @@ int main() {
 
     u1.id = 1;
     u2.id = 2;
-    u1.crush = u2.id;
-    u2.crush = u1.id;
+    u1.crush = u2.crush = -1; // no crushes
 
-    return !check_compatibility(u1, u2);
+    u1.college = "Harvard";
+    u2.college = "MIT";
+
+    // Different colleges should be incompatible
+    return check_compatibility(u1, u2);
 }

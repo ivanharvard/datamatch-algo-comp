@@ -1,6 +1,6 @@
 #include "../scoring.hpp"
 
-// check_compatibility respects blocked house preferences
+// check_compatibility respects age preferences
 
 int main() {
     User u1;
@@ -29,35 +29,22 @@ int main() {
     u3.year = 0;
     u4.year = 0;
 
-    u1.min_compatible_age = 20;
-    u1.max_compatible_age = 20;
-    u2.min_compatible_age = 20;
-    u2.max_compatible_age = 20;
-    u3.min_compatible_age = 20;
-    u3.max_compatible_age = 20;
-    u4.min_compatible_age = 20;
-    u4.max_compatible_age = 20;
-    u1.age = 20;
-    u2.age = 20;
-    u3.age = 20;
-    u4.age = 20;
-    
-    u1.college = "Harvard";
-    u2.college = "Harvard";
-    u3.college = "Harvard";
-    u4.college = "Harvard";
-    u1.house = "Adams";
-    u3.house = "Adams";
-    u1.no_house_matches = false;
-    u2.no_house_matches = false;
 
     // success
-    u1.blocked_houses.push_back("Currier");
-    u2.house = "Quincy";
+    u1.min_compatible_age = 20;
+    u1.max_compatible_age = 25;
+    // u2.min_compatible_age = 21;  // checks that optional age prefs work
+    u2.max_compatible_age = 24;
+    u1.age = 22;
+    u2.age = 23;
 
     // failure
-    u3.blocked_houses.push_back("Currier");
-    u4.house = "Currier";
+    u3.min_compatible_age = 21;
+    u3.max_compatible_age = 21;
+    u4.min_compatible_age = 20;
+    u4.max_compatible_age = 23;
+    u3.age = 21;
+    u4.age = 20;
 
     return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
 }
