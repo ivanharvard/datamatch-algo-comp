@@ -61,7 +61,7 @@ wsl --install
 ```
 and then answer the questions that pop up. Enter in a username and password of
 your choice, but just make sure you remember it.
-Wait until it finishes installing, and once you see:
+Wait until it finishes installing, and once you see something like:
 ```bash
 ivan@IG:/mnt/c/Users/ivang/Documents/github/datamatch-algo-comp/$
 ```
