@@ -62,6 +62,7 @@ def bonus():
     # the bonus function by default only adds 0 to the score, so if the score
     # changes, then we can reasonably conclude that the bonus function has
     # probably been implemented.
-    default_score  = float(check50.run("make answers-9").stdout()[len("Score: "):])
-    your_score     = float(check50.run("make 9").stdout()[len("Score: "):])
+
+    default_score = float(check50.run("make answers-9").stdout().strip("Score: "))
+    your_score    = float(check50.run("make 9").stdout().strip("Score: "))
     assert abs(default_score - your_score) > 1e-3, "did you implement the bonus function?"
