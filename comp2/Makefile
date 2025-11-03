@@ -11,7 +11,7 @@ answers-%:
 scoring:
 	@g++ -c scoring.cc -o scoring.o
 
-7:
+9:
 	@g++ -c scoring.cc -o scoring.o
 	@g++ tests/test$@.cpp scoring.o -o test$@
 	@./test$@; rc=$$?; rm -f test$@; exit $$rc

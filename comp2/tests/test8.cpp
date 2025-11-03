@@ -1,6 +1,6 @@
 #include "../scoring.hpp"
 
-// check_compatibility respects same-house preferences
+// check_compatibility respects blocked house preferences
 
 int main() {
     User u1;
@@ -41,22 +41,23 @@ int main() {
     u2.age = 20;
     u3.age = 20;
     u4.age = 20;
-
-    // success
+    
     u1.college = "Harvard";
     u2.college = "Harvard";
+    u3.college = "Harvard";
+    u4.college = "Harvard";
     u1.house = "Adams";
-    u2.house = "Quincy";
+    u3.house = "Adams";
     u1.no_house_matches = false;
     u2.no_house_matches = false;
 
+    // success
+    u1.blocked_houses.push_back("Currier");
+    u2.house = "Quincy";
+
     // failure
-    u3.college = "Harvard";
-    u4.college = "Harvard";
-    u3.house = "Adams";
-    u4.house = "Adams";
-    u3.no_house_matches = false;
-    u4.no_house_matches = true;
+    u3.blocked_houses.push_back("Currier");
+    u4.house = "Currier";
 
     return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
 }

@@ -108,9 +108,7 @@ bool is_cheating(const User& u1, const User& u2, std::size_t nquestions,
 
 /// check_compatibility(u1, u2):
 ///     Check if users `u1` and `u2` are compatible matches based on various
-///     criteria.
-///
-///     Rules:
+///     criteria specified in the README.
 
 bool check_compatibility(const User& u1, const User& u2) {
     // TODO
@@ -118,7 +116,7 @@ bool check_compatibility(const User& u1, const User& u2) {
 }
 
 /// bonus(u1, u2):
-///    You will implement this 
+///    Implement this according to the README instructions.
 
 float bonus(const User& u1, const User& u2) {
     // TODO
