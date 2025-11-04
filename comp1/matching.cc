@@ -161,6 +161,35 @@ bool try_propose(const int proposer,
                         const int ucount, 
                         std::set<int>* match_sets) {
     // TODO
+    // loop through each of the remaining individuals
+    while (cur_poss[proposer] < ucount) {
+        // current candidate
+        int candidate = sorted_indices[proposer][cur_poss[proposer]];
+        // move onto the next candidate on the preference list
+        cur_poss[proposer]++;
+
+        // -1 means individual can't propose to candidate so skip
+        if (scores[proposer][candidate] == -1) {
+            continue;
+        }
+
+        if (!matched[proposer][candidate]) {
+            if (match_sets[candidate].size() < iter) {
+                addmatch(proposer, candidate, matched, match_sets);
+                return true;
+            }
+            // check if proposer is better than the worst partner of candidate
+            else {
+                int worst_partner = find_worst_partner(candidate, scores, match_sets);
+                if (scores[candidate][proposer] > scores[candidate][worst_partner]) {
+                    removematch(candidate, worst_partner, matched, match_sets);
+                    addmatch(proposer, candidate, matched, match_sets);
+                }
+                //  Attempted a proposal so return true
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -181,6 +210,23 @@ void make_matches(const int target,
                   std::set<int>* match_sets) {
 
     // TODO
+    for (int i = 0; i < ucount; i++) {
+        cur_poss[i] = 0;
+    }
+
+    for (int iter = 1; iter <= target; iter++) {
+        bool hasChanged = true;
+        while (hasChanged) {
+            hasChanged = false;
+            for (int proposer = 0; proposer < ucount; proposer++) {
+                if (match_sets[proposer].size() < iter) {
+                    if (try_propose(proposer, iter, sorted_indices, scores, matched, cur_poss, ucount, match_sets)) {
+                        hasChanged = true;
+                    }
+                }
+            }
+        }
+    }
     return;
 }
 
@@ -217,9 +263,9 @@ static void run(int target, int** sorted_indices,
 
 void perform_matching(const int target, int** scores,
                       bool** matched, const int ucount) {
-    std::vector<std::set<int>> match_sets_vec(ucount);
+    std::vector<std::set<int> > match_sets_vec(ucount);
     std::vector<int>            cur_poss_vec(ucount, 0);
-    std::vector<std::vector<int>> sorted_indices_vec(ucount, std::vector<int>(ucount));
+    std::vector<std::vector<int> > sorted_indices_vec(ucount, std::vector<int>(ucount));
 
     std::vector<int*>  sorted_indices_rows(ucount);
     for (int i = 0; i < ucount; ++i) sorted_indices_rows[i] = sorted_indices_vec[i].data();
