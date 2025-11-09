@@ -111,15 +111,89 @@ bool is_cheating(const User& u1, const User& u2, std::size_t nquestions,
 ///     criteria specified in the README.
 
 bool check_compatibility(const User& u1, const User& u2) {
-    // TODO
-    return false;
+    // Rule: Users can't match with themselves
+    if (u1.id == u2.id) {
+        return false;
+    }
+
+    // Rule: If they are mutual crushes, they are always compatible
+    if (u1.crush == u2.id && u2.crush == u1.id) {
+        return true;
+    }
+
+    // Rule: Must attend the same college
+    if (u1.college != u2.college) {
+        return false;
+    }
+
+    // Rule: Must have matching match types (both love or both friendship)
+    MatchType match_type = get_match_type(u1, u2);
+    if (match_type == MatchType::NEITHER) {
+        return false;
+    }
+
+    // Rule: Year difference must be <= YEAR_DIFF_MAX
+    int year_diff = (u1.year > u2.year) ? (u1.year - u2.year) : (u2.year - u1.year);
+    if (year_diff > YEAR_DIFF_MAX) {
+        return false;
+    }
+
+    // Rule: Age preferences must align
+    // Check u1's preferences against u2's age
+    if (u1.min_compatible_age.has_value() && u2.age < u1.min_compatible_age.value()) {
+        return false;
+    }
+    if (u1.max_compatible_age.has_value() && u2.age > u1.max_compatible_age.value()) {
+        return false;
+    }
+    // Check u2's preferences against u1's age
+    if (u2.min_compatible_age.has_value() && u1.age < u2.min_compatible_age.value()) {
+        return false;
+    }
+    if (u2.max_compatible_age.has_value() && u1.age > u2.max_compatible_age.value()) {
+        return false;
+    }
+
+    // Rule: Some users prefer not to date members within their house
+    if (u1.no_house_matches && u1.house == u2.house) {
+        return false;
+    }
+    if (u2.no_house_matches && u1.house == u2.house) {
+        return false;
+    }
+
+    // Rule: Some users have blocked matching with anyone from certain houses
+    for (const std::string& blocked_house : u1.blocked_houses) {
+        if (u2.house == blocked_house) {
+            return false;
+        }
+    }
+    for (const std::string& blocked_house : u2.blocked_houses) {
+        if (u1.house == blocked_house) {
+            return false;
+        }
+    }
+
+    // All checks passed
+    return true;
 }
 
 /// bonus(u1, u2):
 ///    Implement this according to the README instructions.
 
 float bonus(const User& u1, const User& u2) {
-    // TODO
+    // Bonus: One-way crush feature
+    // If there's a one-way crush (and they are compatible), add bonus points
+    Crush crush_type = get_crush_type(u1, u2);
+    
+    // Mutual crushes are already handled in check_compatibility and get special treatment
+    // For one-way crushes, add a small bonus to the score
+    if (crush_type == Crush::ONE_WAY) {
+        // Add a bonus if they are compatible (though this function is called after compatibility check)
+        // This gives a boost to one-way crushes that pass compatibility checks
+        return 0.5f;
+    }
+    
     return 0.0f;
 }
 
