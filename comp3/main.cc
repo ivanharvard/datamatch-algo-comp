@@ -361,24 +361,8 @@ int main(int argc, char** argv) {
             }
         }
 
-        /// Implement noDormMatch logic: if either user has requested no house/
-        /// dorm matches (no_house_matches == true) and both users have the
-        /// same non-empty `house` string, then forbid matching between them
-        /// by setting their weight to -1 and their matchtype to -1.
-        logger.log(INFO, "Applying noDormMatch rules");
-        for (size_t i = 0; i < tucount; ++i) {
-            for (size_t j = i + 1; j < tucount; ++j) {
-                User* ui = &users[i];
-                User* uj = &users[j];
-                if ((ui->no_house_matches || uj->no_house_matches) &&
-                    !ui->house.empty() && ui->house == uj->house) {
-                    weights[i][j] = -1.f;
-                    weights[j][i] = -1.f;
-                    matchtypes[i][j] = -1;
-                    matchtypes[j][i] = -1;
-                }
-            }
-        }
+        /// TODO: Make noDormMatch logic here. You can make helper functions if
+        /// you want.
 
         logger.log(INFO, "Computing scores");
         std::unordered_map<std::string, std::string> cross_schools; // empty
