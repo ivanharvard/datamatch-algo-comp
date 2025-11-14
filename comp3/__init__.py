@@ -18,6 +18,13 @@ def compiles():
     check50.run("make main") 
 
 @check50.check(compiles)
+def binary_present():
+    """main binary was produced"""
+    # Help debug local runs that report exit code 127 by ensuring the
+    # binary exists and is listable in the sandbox.
+    check50.run("ls -l main")
+
+@check50.check(compiles)
 def runs():
     """program runs successfully"""
     check50.run("./main data/FIREBASE_EXPORT.json data/sims/").exit(0)
