@@ -283,8 +283,13 @@ int main(int argc, char** argv) {
             float** ad = selected.answer_dist;
 
             for (User u : users) {
-                for (size_t i = 0; i < u.answers.size(); ++i) {
-                    ++ad[i][u.answers[i]];
+                for (size_t i = 0; i < u.answers.size() && i < nquestions; ++i) {
+                    // Get the number of options for this question
+                    size_t num_options = cosine_sims_list[i].at("sim_matrix")[0].size();
+                    // Bounds check: ensure answer value is within valid range
+                    if (u.answers[i] >= 0 && u.answers[i] < num_options) {
+                        ++ad[i][u.answers[i]];
+                    }
                 }
             }
             for (size_t i = 0; i < nquestions; ++i) {
@@ -363,6 +368,20 @@ int main(int argc, char** argv) {
 
         /// TODO: Make noDormMatch logic here. You can make helper functions if
         /// you want.
+        logger.log(INFO, "Processing noDormMatch");
+        for (size_t i = 0; i < tucount; ++i) {
+            User* user = &users[i];
+            if (user->no_house_matches && !user->house.empty()) {
+                for (size_t j = 0; j < tucount; ++j) {
+                    if (i != j && users[j].house == user->house) {
+                        weights[i][j] = -1;
+                        weights[j][i] = -1;
+                        matchtypes[i][j] = -1;
+                        matchtypes[j][i] = -1;
+                    }
+                }
+            }
+        }
 
         logger.log(INFO, "Computing scores");
         std::unordered_map<std::string, std::string> cross_schools; // empty
