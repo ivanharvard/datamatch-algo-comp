@@ -283,8 +283,13 @@ int main(int argc, char** argv) {
             float** ad = selected.answer_dist;
 
             for (User u : users) {
-                for (size_t i = 0; i < u.answers.size(); ++i) {
-                    ++ad[i][u.answers[i]];
+                for (size_t i = 0; i < u.answers.size() && i < nquestions; ++i) {
+                    // Get the number of options for this question
+                    size_t num_options = cosine_sims_list[i].at("sim_matrix")[0].size();
+                    // Bounds check: ensure answer value is within valid range
+                    if (u.answers[i] >= 0 && u.answers[i] < num_options) {
+                        ++ad[i][u.answers[i]];
+                    }
                 }
             }
             for (size_t i = 0; i < nquestions; ++i) {
