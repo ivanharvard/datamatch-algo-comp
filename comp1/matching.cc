@@ -200,17 +200,8 @@ static void run(int target, int** sorted_indices,
 
     make_sortedindices(sorted_indices, scores, ucount);
 
-    make_matches(target, sorted_indices, scores, matched, 
+    make_matches(target, sorted_indices, scores, matched,
                  cur_poss, ucount, match_sets);
-
-    // Sanity: no forbidden edges used when someone is totally isolated
-    for (int i = 0; i < ucount; ++i) {
-        for (int j = 0; j < ucount; ++j) {
-            if (match_sets[i].empty() && match_sets[j].empty()) {
-                assert(scores[i][j] < 0 && "Did you implement try_propose and make_matches yet?");
-            }
-        }
-    }
 
     output(scores, ucount, match_sets);
 }

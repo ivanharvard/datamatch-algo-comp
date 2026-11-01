@@ -108,11 +108,38 @@ Log out and back in afterwards so the `docker` group change takes effect.
    ```bash
    ./docker/run.sh
    ```
+   If you see
+   ```bash
+   student@datamatch:/workspace$
+   ```
+   then Docker worked!
 3. You're now in `/workspace`, which is your repo. Edits you make in VSCode
    show up inside the container right away. Run `make` and `check50` from
    here as the assignment instructions describe, e.g.
    ```bash
-   cd comp1
-   check50 ivanharvard/datamatch-algo-comp/main/comp1 --local
+   student@datamatch:/workspace$ cd comp1
+   student@datamatch:/workspace/comp1$ check50 ivanharvard/datamatch-algo-comp/main/comp1 --local
    ```
-   Type `exit` to leave the container.
+
+## Using Git
+
+Commit, push, and sync your fork from GitHub Desktop (or the Source Control tab
+in VSCode) on your own computer, not inside Docker. Docker uses the same files,
+so anything you change in the container shows up in GitHub Desktop right away.
+
+You can also commit from inside the container, since `./docker/run.sh` passes
+in the name and email from your computer's git settings. You can't push from
+inside the container, because your GitHub login isn't there. Push from GitHub
+Desktop instead.
+
+If committing inside the container says `Please tell me who you are`, set your
+name and email outside Docker (in WSL on Windows), using the email on your
+GitHub account. Then run `./docker/run.sh` again.
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+**Windows users:** if `git status` inside the container lists files you didn't
+change, that's because Windows and Linux end lines of text differently. Don't
+commit those files. Use GitHub Desktop for git instead.

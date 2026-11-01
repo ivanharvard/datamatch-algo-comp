@@ -55,7 +55,7 @@ def test7():
     """test7.cpp passes"""
     solution_matches_test(7)
 
-@check50.check(compiles)
+@check50.check(test7)
 def no_memory_leak():
     """matching.cc has no memory leaks"""
     test = "test7" # we only test leaks on this
@@ -69,5 +69,19 @@ def solution_matches_test(i):
 
     solution = check50.run(f"./test{i}_sol").stdout()
     output = check50.run(f"./test{i}").stdout()
+
+    # check50 truncates long output, so explain the common failures in full.
+    crashed = "Assertion" in output
+    assert not crashed, check50.Failure(
+        f"test{i} crashed on an assert in matching.cc",
+        help=output.strip(),
+    )
+
+    made_no_matches = output.startswith("Total matches: 0\n")
+    expected_matches = not solution.startswith("Total matches: 0\n")
+    assert not (made_no_matches and expected_matches), check50.Failure(
+        "no matches were made",
+        help="Have you implemented try_propose and make_matches yet?",
+    )
 
     assert output == solution

@@ -19,5 +19,13 @@ RUN pip install --no-cache-dir "git+https://github.com/cs50/check50@4.0.0-dev"
 # The repo is mounted from the host, so its owner won't match the container user.
 RUN git config --system --add safe.directory '*'
 
+# Lets entrypoint.sh add a "student" user for whatever user ID run.sh passes in.
+RUN mkdir -p /home/student \
+    && chmod 777 /home/student \
+    && chmod 666 /etc/passwd /etc/group
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
 WORKDIR /workspace
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash"]

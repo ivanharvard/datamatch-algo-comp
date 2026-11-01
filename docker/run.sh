@@ -14,11 +14,27 @@ fi
 # creates aren't owned by root. Docker Desktop on macOS handles this itself.
 user_args=()
 if [ "$(uname -s)" = "Linux" ]; then
-    user_args=(--user "$(id -u):$(id -g)" -e HOME=/tmp)
+    user_args=(--user "$(id -u):$(id -g)" -e HOME=/home/student)
+fi
+
+# Pass your git name and email in so you can commit from inside the container.
+# (Pushing still happens outside Docker, where your GitHub login lives.)
+git_args=()
+if command -v git >/dev/null 2>&1; then
+    git_name="$(git config --global user.name || true)"
+    git_email="$(git config --global user.email || true)"
+    if [ -n "$git_name" ]; then
+        git_args+=(-e GIT_AUTHOR_NAME="$git_name" -e GIT_COMMITTER_NAME="$git_name")
+    fi
+    if [ -n "$git_email" ]; then
+        git_args+=(-e GIT_AUTHOR_EMAIL="$git_email" -e GIT_COMMITTER_EMAIL="$git_email")
+    fi
 fi
 
 docker run -it --rm \
     ${user_args[@]+"${user_args[@]}"} \
+    ${git_args[@]+"${git_args[@]}"} \
     -v "$repo_root":/workspace \
     -w /workspace \
+    --hostname datamatch \
     datamatch
