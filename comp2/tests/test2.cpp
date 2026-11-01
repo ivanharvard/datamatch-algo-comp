@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility returns false for users attending different colleges
 
@@ -19,6 +20,12 @@ int main() {
     u1.college = "Harvard";
     u2.college = "MIT";
 
-    // Different colleges should be incompatible
-    return check_compatibility(u1, u2);
+    expect(!check_compatibility(u1, u2),
+           "u1 (Harvard) and u2 (MIT) attend different colleges, so they should not be compatible");
+
+    u2.college = "Harvard";
+    expect(check_compatibility(u1, u2),
+           "u1 and u2 both attend Harvard with matching preferences, so they should be compatible");
+
+    return failures;
 }

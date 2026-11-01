@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility respects love/friendship preferences
 
@@ -31,5 +32,10 @@ int main() {
     u3.friendprefs.insert(MALE);
     u4.loveprefs.insert(MALE);
 
-    return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
+    expect(check_compatibility(u1, u2),
+           "u1 and u2 are both seeking love with each other, so they should be compatible");
+    expect(!check_compatibility(u3, u4),
+           "u3 is seeking friendship and u4 is seeking love, so they should not be compatible");
+
+    return failures;
 }

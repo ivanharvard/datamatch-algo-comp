@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility respects same-house preferences
 
@@ -58,5 +59,10 @@ int main() {
     u3.no_house_matches = false;
     u4.no_house_matches = true;
 
-    return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
+    expect(check_compatibility(u1, u2),
+           "u1 (Adams) and u2 (Quincy) are in different houses, so they should be compatible");
+    expect(!check_compatibility(u3, u4),
+           "u3 and u4 are both in Adams and u4 doesn't want house matches, so they should not be compatible");
+
+    return failures;
 }

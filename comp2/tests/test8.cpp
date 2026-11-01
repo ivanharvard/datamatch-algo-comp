@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility respects blocked house preferences
 
@@ -59,5 +60,10 @@ int main() {
     u3.blocked_houses.push_back("Currier");
     u4.house = "Currier";
 
-    return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
+    expect(check_compatibility(u1, u2),
+           "u1 blocked Currier, but u2 is in Quincy, so they should be compatible");
+    expect(!check_compatibility(u3, u4),
+           "u3 blocked Currier and u4 is in Currier, so they should not be compatible");
+
+    return failures;
 }

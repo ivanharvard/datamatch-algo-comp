@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility respects class year gaps
 
@@ -30,5 +31,10 @@ int main() {
     u3.year = 0;
     u4.year = 3;
 
-    return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
+    expect(check_compatibility(u1, u2),
+           "u1 (year 0) and u2 (year 1) are within YEAR_DIFF_MAX, so they should be compatible");
+    expect(!check_compatibility(u3, u4),
+           "u3 (year 0) and u4 (year 3) are more than YEAR_DIFF_MAX apart, so they should not be compatible");
+
+    return failures;
 }

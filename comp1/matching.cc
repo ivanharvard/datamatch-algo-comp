@@ -10,7 +10,7 @@
 // Helper functions
 // ================================================
 
-/// addmatch(a, b, matched, matched_sets):
+/// addmatch(a, b, matched, match_sets):
 ///     Add a match between individuals `a` and `b`, which updates the `matched`
 ///     matrix and the `match_sets` accordingly.
 
@@ -21,9 +21,9 @@ static void addmatch(int a, int b, bool** matched, std::set<int>* match_sets) {
     match_sets[b].insert(a);
 }
 
-/// removematch(a, b, matched, has, match_sets):
+/// removematch(a, b, matched, match_sets):
 ///     Remove the match between individuals `a` and `b`, updating the `matched`
-///     structure and updating `has` and `match_sets` accordingly.
+///     matrix and the `match_sets` accordingly.
 
 static void removematch(int a, int b, bool** matched, std::set<int>* match_sets) {
     assert(matched[a][b] && matched[b][a]);
@@ -114,24 +114,29 @@ static int find_worst_partner(int candidate, int** scores,
 // ================================================
 
 /// try_propose(proposer, iter, sorted_indices, scores, matched, cur_poss,
-///             change, ucount, has, match_sets):
-///     A proposer advances through their preference list and attempts to match
-///     with the first feasible candidate.
+///             ucount, match_sets):
+///     A proposer goes down their preference list, starting at
+///     `cur_poss[proposer]`, and proposes to each candidate in turn until one
+///     accepts. Advance `cur_poss[proposer]` past every candidate considered,
+///     so the next call picks up where this one left off.
 ///
 ///     Rules:
-///      - If a proposer has a score of -1 with a candidate 
-///        (i.e. score[proposer][candidate] == -1), they cannot propose
+///      - If a proposer has a score of -1 with a candidate
+///        (i.e. scores[proposer][candidate] == -1), they cannot propose
 ///        to that candidate. Skip over them.
-///      - If a proposer and candidate are not currently matched, and candidate
-///        has the capacity to accept a new match
+///      - If the proposer and candidate are already matched, skip over them.
+///      - If the candidate has the capacity to accept a new match
 ///        (i.e. match_sets[candidate].size() < iter), then a match is made.
-///      - Else, if the candidate is at capacity, compare scores at the candidate.
-///        If the proposer is strictly better than some current partner m in
-///        candidate's match set, replace them using `removematch` and a 
-///        subsequent `addmatch`. You may find the helper function 
-///        `find_worst_partner` useful for this. 
-///      - Returns true if a proposal was attempted (regardless of success), 
-///        false otherwise.
+///      - Else, the candidate is at capacity, so compare scores at the
+///        candidate. If the candidate scores the proposer strictly higher than
+///        their worst current partner m (by scores[candidate][...]), replace m
+///        using `removematch` and a subsequent `addmatch`. You may find the
+///        helper function `find_worst_partner` useful for this.
+///      - Otherwise, the candidate rejects the proposer. Move on to the next
+///        candidate in the list.
+///      - Returns true as soon as a match is made (including a replacement).
+///        Returns false if the proposer reaches the end of their list without
+///        making a match.
 ///
 ///     Parameters:
 ///      - proposer: The index of the individual making the proposal.
@@ -167,7 +172,8 @@ bool try_propose(const int proposer,
 /// make_matches(target, sorted_indices, scores, matched, cur_poss,
 ///              ucount, match_sets):
 ///     Iterate proposal rounds from `iter = 1` to `iter = target`. In each
-///     round, keep making proposal until a full pass produces no changes. 
+///     round, keep making passes over every proposer until a full pass makes
+///     no new matches (i.e. no call to `try_propose` returns true).
 ///     Ensure that `cur_poss` is reset at the start of the function (i.e. 
 ///     `cur_poss[i] = 0` for all `i`). Only propose if the proposer has
 ///     remaining capacity (i.e. `match_sets[proposer].size() < iter`).

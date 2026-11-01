@@ -1,4 +1,5 @@
 #include "../scoring.hpp"
+#include "expect.hpp"
 
 // check_compatibility respects age preferences
 
@@ -46,5 +47,10 @@ int main() {
     u3.age = 21;
     u4.age = 20;
 
-    return !(check_compatibility(u1, u2) && !check_compatibility(u3, u4));
+    expect(check_compatibility(u1, u2),
+           "u1 (22, wants 20-25) and u2 (23, wants at most 24) fit each other's age preferences, so they should be compatible");
+    expect(!check_compatibility(u3, u4),
+           "u3 only wants age 21 but u4 is 20, so they should not be compatible");
+
+    return failures;
 }

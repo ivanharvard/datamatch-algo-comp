@@ -3,16 +3,37 @@
 These are checks for comp1. Feel free to read them. Editing them won't help much,
 but if you find a mistake, please let me know!
 """
+import shutil
+from pathlib import Path
+
 import check50
 import check50.config
 import check50.c
+import check50.internal
 
 check50.config.set_truncate_len(50)
+
+def use_latest(*paths):
+    """
+    Copy these files from the downloaded checks into the copy being checked,
+    so the newest tests and answers are used even if a fork isn't synced yet.
+    """
+    check_dir = Path(check50.internal.check_dir)
+    for path in paths:
+        src, dst = check_dir / path, Path(path)
+        if dst.exists() and src.resolve() == dst.resolve():
+            continue
+        if src.is_dir():
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        else:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(src, dst)
 
 @check50.check()
 def exists():
     """matching.cc exists"""
     check50.exists("matching.cc")
+    use_latest("tests", "answers.o")
 
 @check50.check(exists)
 def compiles():
@@ -55,6 +76,11 @@ def test7():
     """test7.cpp passes"""
     solution_matches_test(7)
 
+@check50.check(compiles)
+def test8():
+    """test8.cpp passes (small case you can trace by hand)"""
+    solution_matches_test(8)
+
 @check50.check(test7)
 def no_memory_leak():
     """matching.cc has no memory leaks"""
@@ -73,7 +99,7 @@ def solution_matches_test(i):
     # check50 truncates long output, so explain the common failures in full.
     crashed = "Assertion" in output
     assert not crashed, check50.Failure(
-        f"test{i} crashed on an assert in matching.cc",
+        f"test{i} crashed on an assert",
         help=output.strip(),
     )
 
@@ -84,4 +110,4 @@ def solution_matches_test(i):
         help="Have you implemented try_propose and make_matches yet?",
     )
 
-    assert output == solution
+    assert output == solution
