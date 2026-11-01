@@ -10,3 +10,4 @@ answers.*
 __pycache__/
 .vscode/*
 comp3/results/*
+!Dockerfile

@@ -13,24 +13,9 @@ Afterwards, click "Create fork."
 You are now free to work on this fork. Be sure to sync with my repository when
 a new assignment drops.
 
-# Requirements
-
-You'll probably want to install [`VSCode`](https://code.visualstudio.com/) if
-you haven't already.
-
-You'll probably want to install [`Github Desktop`](https://desktop.github.com/download/)
-(or just use `Git` if more comfortable).
-
-In the terminal of your chosen IDE, run
-```
-pip install check50
-python3 -m pip install --upgrade "git+https://github.com/cs50/check50@4.0.0-dev"
-```
-This installs `check50`, and is how you'll check your work.
-
 # Completing an assignment
 
-When a new assignment is released, sync with my repository. You should see a new
+If a new assignment is released, sync with my repository. You should see a new
 folder being added to your repository upon syncing. This is the new assignment
 and is labeled something like `comp1` or `comp2` or `comp3`. Let's focus on
 `comp1` for now.
@@ -47,13 +32,17 @@ You can see how we're testing you in two ways:
 2. Read any file inside the `tests/` folder. This is what `check50` will run to
 compare your outputs against a known set of answers.
 
-## Troubleshooting
+# Requirements
 
-If you're using Windows, you'll likely encounter issues like from the above
-command. Read the section `Windows Users` and come back. If you're not, using
-Windows, continue to `Linux/MacOS Users`
+You'll probably want to install [`VSCode`](https://code.visualstudio.com/) if
+you haven't already.
 
-### Windows Users
+You'll probably want to install [`Github Desktop`](https://desktop.github.com/download/)
+(or just use `Git` if more comfortable).
+
+Now, we'll set up something called `Docker`. It will allow us to have a consistent environment for grading and compiling your code.
+
+## Windows Users
 
 You'll probably want to install Windows Subsystem for Linux (WSL). Run:
 ```powershell
@@ -62,7 +51,7 @@ wsl --install
 and then answer the questions that pop up. Enter in a username and password of
 your choice, but just make sure you remember it.
 Wait until it finishes installing, and once you see something like:
-```bash
+```text
 ivan@IG:/mnt/c/Users/ivang/Documents/github/datamatch-algo-comp/$
 ```
 then you're on the right track! You can run:
@@ -75,20 +64,55 @@ wsl
 ```
 to enter WSL again.
 
-Now, continue to the section `Linux/MacOS Users`.
+Now, continue to the section `Installing Docker`.
 
-### Linux/MacOS Users
+## Installing Docker
 
-Run:
+Docker creates a layer above your operating system (called a "container"). Programs running in this container have the correct requirements for our assignments, and believe they are running on their own operating system.
+
+You can think of it as a lightweight virtual machine.
+
+### Windows/MacOS Users
+
+You will need to install something called [Docker Desktop](https://www.docker.com/products/docker-desktop/). Download it and follow the instructions.
+
+When using any Docker commands, Docker Desktop must be open. If you get an error
+like
+```text
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 ```
-sudo apt update
-sudo apt install -y python3 python3-pip
-sudo apt install -y build-essential
+then this is a sign that Docker Desktop is not open or must be restarted.
+
+You should see a screen like this when it's set up.
+![Docker Desktop idle screen](images/docker.png)
+
+### Linux Users
+
+The installation process depends on your distro. But in general, you will install the Docker daemon using whatever package manager you use. For example, these are the steps for installing Docker using `pacman` in `bash`.
+```bash
+sudo pacman -S docker docker-buildx
+sudo systemctl enable --now docker.service
+sudo usermod -aG docker $USER
 ```
-Now verify the commands exist:
-```
-python3 --version
-pip3 --version
-gcc --version
-make --version
-```
+Log out and back in afterwards so the `docker` group change takes effect.
+
+## Using Docker
+
+**Windows users: run these commands from a WSL terminal.**
+
+1. In the root of your fork, build the image (only needed once):
+   ```bash
+   ./docker/build.sh
+   ```
+2. Start a shell inside the container:
+   ```bash
+   ./docker/run.sh
+   ```
+3. You're now in `/workspace`, which is your repo. Edits you make in VSCode
+   show up inside the container right away. Run `make` and `check50` from
+   here as the assignment instructions describe, e.g.
+   ```bash
+   cd comp1
+   check50 ivanharvard/datamatch-algo-comp/main/comp1 --local
+   ```
+   Type `exit` to leave the container.
