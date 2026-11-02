@@ -24,13 +24,16 @@ struct User {
     std::set<std::string> blocklist;
     int year;
     int age;
+    int ageRange = -1;
     int seriousness = 2;
     std::string crush = "";
     std::string house = "";
     std::string bio = "";
     std::string mbti = "";
     std::string costar = "";
+    std::string religion = "";
     int ricepurity = -1;
+    bool restrict_religion = false;
     bool has_prompts = false;
     bool no_house_matches = false;
     std::vector<std::string> blocked_houses = {};

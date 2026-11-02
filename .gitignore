@@ -7,7 +7,9 @@
 *.o
 answers.*
 !answers.o
+!comp3/matching.o
 __pycache__/
 .vscode/*
-comp3/results/*
+comp3/data/results/
+comp3/logs/
 !Dockerfile

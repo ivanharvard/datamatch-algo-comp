@@ -2,6 +2,8 @@
 #define CHECKING_H
 
 #include "user.h"
+#include "types.h"
+#include <cstdint>
 
 // check_blocklist(users, matches, user_idxs)
 //   Iterates through all users and ensures that none of them are matched with
@@ -14,6 +16,6 @@ void check_blocklist(std::vector<User>& users,
 //   preferences have been bidirectionally honored.
 void check_gender_prefs(std::vector<User>& users,
                         std::vector<std::pair<size_t, size_t>>& matches,
-                        int** matchtypes);
+                        Matrix2D<int8_t>& matchtypes);
 
 #endif

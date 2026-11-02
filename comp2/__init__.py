@@ -42,15 +42,19 @@ def run_test(i):
 
 @check50.check()
 def exists():
-    """scoring.cc exists"""
-    check50.exists("scoring.cc")
-    use_latest("tests", "answers.o", "Makefile")
+    """compatibility.cc, factors/my_factor.cc and factors/registry.cc exist"""
+    check50.exists("compatibility.cc", "factors/my_factor.cc", "factors/registry.cc")
+    # Provided files are refreshed too; the three files above are yours and
+    # are never overwritten.
+    use_latest("tests", "answers.o", "Makefile", "scoring.cc", "scoring.hpp",
+               "user.hpp", "factors/factors.hpp", "factors/class_year.cc",
+               "factors/crush.cc", "factors/rice_purity.cc", "factors/profile.cc")
 
 @check50.check(exists)
 def compiles():
-    """scoring.cc compiles"""
+    """your code compiles"""
     check50.run("make scoring").exit(0)
-    check50.exists("scoring.o")
+    check50.exists("compatibility.o", "factors/my_factor.o")
 
 @check50.check(compiles)
 def same_user():
@@ -69,7 +73,7 @@ def match_type():
 
 @check50.check(compiles)
 def mutual_crushes():
-    """check_compatibility returns true for mutual crushes"""
+    """check_compatibility lets mutual crushes skip year and dealbreaker checks, but not preferences"""
     run_test(4)
     
 @check50.check(compiles)
@@ -93,12 +97,6 @@ def blocked_house_preferences():
     run_test(8)
 
 @check50.check(compiles)
-def bonus():
-    """bonus function makes a meaningful contribution to score calculation"""
-    # the bonus function by default only adds 0 to the score, so if the score
-    # changes, then we can reasonably conclude that the bonus function has
-    # probably been implemented.
-
-    default_score = float(check50.run("make answers-9").stdout().strip("Score: "))
-    your_score    = float(check50.run("make 9").stdout().strip("Score: "))
-    assert abs(default_score - your_score) > 1e-3, "did you implement the bonus function?"
+def my_factor():
+    """my_factor is listed in factors/registry.cc and gives points to some pairs"""
+    run_test(9)

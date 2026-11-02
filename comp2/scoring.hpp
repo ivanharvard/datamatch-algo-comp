@@ -1,5 +1,14 @@
 #pragma once
 
+// Scoring for one pair of users, in answer points:
+//
+//   score = survey_points() + profile_points()
+//
+// This mirrors the real algorithm's layout:
+//   compatibility.cc   who can be matched at all (check_compatibility)
+//   scoring.cc         survey_points, profile_points, calculate_score
+//   factors/           one file per profile factor, listed in factors/registry.cc
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -34,7 +43,7 @@ struct College {
     //      cosine similarity between answer1 and answer2 for question_index
     //
     // However, this uses a lot of memory: O(num_questions * num_options^2).
-    // 
+    //
     // A more memory-efficient way is to flatten the 3D matrix into a 1D vector.
     // Let Q be the number of questions, and A be the number of answer options.
 
@@ -59,25 +68,36 @@ struct College {
     }
 };
 
+// compatibility.cc
 MatchType get_match_type(const User& u1, const User& u2);
 Crush     get_crush_type(const User& u1, const User& u2);
+bool      check_compatibility(const User& u1, const User& u2);
 
-bool check_compatibility(const User& u1, const User& u2);
-
-float calculate_rice_purity(float rps1, float rps2) noexcept;
-
-float init_weight(const User& u1, const User& u2) noexcept;
-
-float calculate_weight(const User& u1, const User& u2,
-                       float shipval, float ship_mu, float ship_sig) noexcept;
-
+// scoring.cc
 bool is_cheating(const User& u1, const User& u2, std::size_t nquestions,
                  const std::unordered_map<std::string, College>& college_dists);
 
-float calculate_score(
+// How similar u1 and u2's survey answers, bios, prompts and Spotify artists
+// are, in answer points scaled to a 12-question survey. std::nullopt if they
+// can't be matched (different colleges, or answers so similar that they look
+// coordinated).
+std::optional<float> survey_points(
     const User& u1,
     const User& u2,
-    float weight,
+    std::size_t num_questions,
+    const std::unordered_map<std::string, College>& college_dists,
+    float bio_score,
+    float short_answer_score,
+    float spotify_score);
+
+// Sum of every profile factor's points (factors/registry.cc), or
+// std::nullopt if check_compatibility() says they can't be matched.
+std::optional<float> profile_points(const User& u1, const User& u2);
+
+// survey_points() + profile_points(), or std::nullopt if either is.
+std::optional<float> calculate_score(
+    const User& u1,
+    const User& u2,
     std::size_t num_questions,
     const std::unordered_map<std::string, College>& college_dists,
     float bio_score,

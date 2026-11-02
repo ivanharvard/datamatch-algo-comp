@@ -26,20 +26,20 @@ def use_latest(*paths):
             shutil.copy(src, dst)
 
 def load_matches():
-    p = Path("results/matches_Harvard.json")
-    assert p.exists(), "results/matches_Harvard.json not found"
+    p = Path("data/results/matches_Harvard.json")
+    assert p.exists(), "data/results/matches_Harvard.json not found"
     return json.loads(p.read_text())
 
 @check50.check()
 def exists():
-    """main exists"""
-    check50.exists("main.cc")
-    use_latest("data")
+    """inputs.cc and compatibility.cc exist"""
+    check50.exists("inputs.cc", "compatibility.cc", "main.cc")
+    use_latest("data", "matching.o", "Makefile")
 
 @check50.check(exists, timeout=200)
 def compiles():
     """main compiles"""
-    # main.cc includes the large json.hpp, so compiling can take a while.
+    # Most files include the large json.hpp, so compiling can take a while.
     check50.run("make main").exit(0, timeout=180)
 
 @check50.check(compiles)
@@ -50,7 +50,7 @@ def binary_present():
 @check50.check(compiles)
 def runs():
     """program runs successfully"""
-    check50.run("./main data/FIREBASE_EXPORT.json data/sims/").exit(0, timeout=60)
+    check50.run("./main data/FIREBASE_EXPORT.json data/sims data/sims data/sims data/sims").exit(0, timeout=60)
 
 @check50.check(runs)
 def u1_u2_cannot_date_if_same_dorm_and_noDormMatch():

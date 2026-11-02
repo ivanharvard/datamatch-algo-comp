@@ -1,9 +1,13 @@
 check50:
   files: &check50_files
     - !exclude "*"
-    - !require "scoring.cc"
+    - !require "compatibility.cc"
+    - !require "factors/my_factor.cc"
+    - !require "factors/registry.cc"
+    - !include "scoring.cc"
     - !include "scoring.hpp"
     - !include "user.hpp"
     - !include "Makefile"
+    - !include "factors/*"
     - !include "tests/*"
     - !include "answers.o"

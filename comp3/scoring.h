@@ -1,61 +1,49 @@
 #ifndef SCORING_H
 #define SCORING_H
 
+// Per-pair scoring, in answer points (see factors/factors.h for the unit):
+//
+//   score = survey_points() + profile_points()
+//
+// Profile factors live in factors/, one file each. Dealbreakers live in
+// compatibility.cc.
+
+#include <limits>
+#include <optional>
+#include <string>
+#include <unordered_map>
+
+#include "compatibility.h"
+#include "types.h"
 #include "user.h"
 
-#define MBTI_BEST   1.15
-#define MBTI_GOOD   1.1
-#define MBTI_OK     1
-#define MBTI_BAD    0.95
-#define MBTI_WORST  0.9
-
+// Per-school survey statistics used by survey_points()
 struct College {
     std::string name;
-    float*** cosine_sims;
-    float** answer_dist;
+    Matrix3D<float> cosine_sims;
+    Matrix2D<float> answer_dist;
     float exp_sim = 0.0;
     float dist_min = std::numeric_limits<float>::max();
 };
 
-enum Crush {
-    MUTUAL,
-    ONE_WAY,
-    NO_CRUSH,
-};
+// Sum of every profile factor's points (factors/registry.cc), or nullopt if
+// u1 and u2 can't be matched (match type, class year gap, dealbreakers).
+std::optional<float> profile_points(const User* u1, const User* u2,
+                                    const float shipval, const float ship_mu,
+                                    const float ship_sig);
 
-enum MatchType {
-    LOVE,
-    FRIENDSHIP,
-    NEITHER,
-};
-
-std::vector<int> getrandanswers(size_t num_questions, size_t num_options);
-
-MatchType getmatchtype(const User* u1, const User* u2);
-
-float calculate_weight(const User* u1, const User* u2, const float shipval,
-                       const float ship_mu, const float ship_sig);
-
-float calculate_cross_weight(const User* u1, const User* u2,
-                             const float shipval);
-
-float calculate_score(
+// How similar u1 and u2's survey answers, bios, prompts and Spotify artists
+// are, in answer points scaled to a 12-question survey. Always above 0.
+// nullopt if they can't be matched: different schools, or so many identical
+// answers that they look coordinated.
+std::optional<float> survey_points(
     const User* u1,
     const User* u2,
-    const float weight,
     const size_t num_questions,
-    const std::unordered_map<std::string, std::string>& cross_schools,
     const std::unordered_map<std::string, College>& college_dists,
     const float bio_score,
     const float short_answer_score,
     const float spotify_score
 );
-
-float calculate_cross_score(const User* u1, const User* u2, const float weight);
-
-float calculate_rice_purity(const float rps1, const float rps2);
-
-float mbti_compatability(std::string mbti1, std::string mbti2);
-
 
 #endif

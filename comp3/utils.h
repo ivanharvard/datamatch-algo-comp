@@ -11,6 +11,7 @@ enum LogLevel {
     DEBUG,
     WARNING,
     ERROR,
+    TESTING
 };
 
 /**
@@ -45,16 +46,20 @@ public:
     std::unordered_map<LogLevel, std::string> headers = {
         {DEBUG, "Debug: "},
         {WARNING, "Warning: "},
-        {ERROR, "Error: "}
+        {ERROR, "Error: "},
+        {TESTING, "Testing: "}
     };
 
     static Logger& init(FILE* out);
     static Logger& instance();
     void log(LogLevel level, const char* format, ...);
+    void set_level(LogLevel level);
     static FILE* create_file();
+    static void shutdown();
 
 private:
     static Logger logger;
+    LogLevel min_level = INFO;
 };
 
 // get_index(v, target)
